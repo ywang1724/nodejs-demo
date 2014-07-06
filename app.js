@@ -23,13 +23,11 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', routes);
+app.use('/', routes);
+app.use('/login', routes);
 app.use('/users', users);
-app.get('/', routes.index);
-app.get('/login', routes.login);
-app.post('/login', routes.doLogin);
-app.get('/logout', routes.logout);
-app.get('/home', routes.home);
+app.use('/logout', routes);
+app.use('/home', routes);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
