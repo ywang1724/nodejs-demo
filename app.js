@@ -4,6 +4,13 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cookieSession = require('cookie-session');
+var session = require('express-session');
+var SessionStore = require("session-mongoose");
+var store = new SessionStore({
+    url: "mongodb://localhost/session",
+    interval: 120000
+});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -21,6 +28,16 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+app.use(cookieSession({secret : 'ywang1724.com'}));
+app.use(session({
+    secret : 'ywang1724.com',
+    store: store,
+    cookie: { maxAge: 900000 }
+}));
+app.use(function(req, res, next){
+    res.locals.user = req.session.user;
+    next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
