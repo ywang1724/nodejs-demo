@@ -2,8 +2,8 @@
 1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
 1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
 1 verbose cli   'start' ]
-2 info using npm@1.4.9
-3 info using node@v0.10.28
+2 info using npm@1.4.21
+3 info using node@v0.10.30
 4 verbose node symlink C:\Program Files\nodejs\\node.exe
 5 verbose run-script [ 'prestart', 'start', 'poststart' ]
 6 info prestart nodejs-demo@0.0.1
@@ -23,7 +23,7 @@
 12 error System Windows_NT 6.1.7601
 13 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "start"
 14 error cwd E:\project\nodejs-demo
-15 error node -v v0.10.28
-16 error npm -v 1.4.9
+15 error node -v v0.10.30
+16 error npm -v 1.4.21
 17 error code ELIFECYCLE
 18 verbose exit [ 1, true ]
