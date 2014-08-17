@@ -8,16 +8,17 @@ router.get('/', function(req, res) {
 
 router.route('/login')
 .get(function(req, res) {
-    authentication(req, res);
-    res.render('login', { title: '用户登陆'});
+    if (req.session.user) {
+        res.redirect('/home');
+    }
+    res.render('login', { title: '用户登录' });
 })
 .post(function(req, res) {
-    var user={
+    var user = {
         username: 'admin',
-        password: 'admin'
+        password: '123456'
     }
-    authentication(req, res);
-    if(req.body.username===user.username && req.body.password===user.password){
+    if (req.body.username === user.username && req.body.password === user.password) {
         req.session.user = user;
         res.redirect('/home');
     } else {
@@ -27,28 +28,19 @@ router.route('/login')
 });
 
 router.get('/logout', function(req, res) {
-    notAuthentication(req, res);
     req.session.user = null;
     res.redirect('/');
 });
 
 router.get('/home', function(req, res) {
     authentication(req, res);
-    res.render('home', { title: 'Home'});
+    res.render('home', { title: 'Home' });
 });
 
 function authentication(req, res) {
     if (!req.session.user) {
-        console.log("notauth");
         req.session.error='请先登录';
         return res.redirect('/login');
-    }
-}
-function notAuthentication(req, res) {
-    console.log("notauth");
-    if (req.session.user) {
-        req.session.error='已登录';
-        return res.redirect('/');
     }
 }
 

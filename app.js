@@ -2,16 +2,14 @@ var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
-//var cookieParser = require('cookie-parser');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var cookieSession = require('cookie-session');
-//var session = require('express-session');
-//var connect = require('connect');
-//var SessionStore = require("session-mongoose")(express);
-//var store = new SessionStore({
-//    url: "mongodb://localhost/session",
-//    interval: 120000 // expiration check worker run interval in millisec (default: 60000)
-//});
+
+//采用connect-mongodb中间件作为Session存储  
+var session = require('express-session');  
+var Settings = require('./database/settings');  
+var MongoStore = require('connect-mongodb');  
+var db = require('./database/msession'); 
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -20,36 +18,41 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-//app.set('view engine', 'ejs');
 
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-//app.use(cookieParser());
-app.use(cookieSession({secret : 'ywang1724.com'}));
-// configure session provider
-//app.use(express.session({
-//    store: store,
-//    cookie: { maxAge: 900000 } // expire session in 15 min or 900 seconds
-//}));
-app.use(function(req, res, next){
+app.use(cookieParser());
+//session配置
+app.use(session({
+    cookie: { maxAge: 600000 },
+    secret: Settings.COOKIE_SECRET,
+    store: new MongoStore({  
+        username: Settings.USERNAME,
+        password: Settings.PASSWORD,
+        url: Settings.URL,
+        db: db})
+}))
+app.use(function(req, res, next) {
     res.locals.user = req.session.user;
     var err = req.session.error;
     delete req.session.error;
     res.locals.message = '';
     if (err) {
-        res.locals.message = '<div class="alert alert-error">' + err + '</div>';
+        res.locals.message = '<div class="alert alert-warning">' + err + '</div>';
     }
     next();
 });
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/login', routes);
 app.use('/users', users);
+app.use('/login', routes);
 app.use('/logout', routes);
 app.use('/home', routes);
 
@@ -83,5 +86,6 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
 
 module.exports = app;
